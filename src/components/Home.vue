@@ -163,7 +163,7 @@ export default {
           query: {imgUrl: url}})
       },
       getDataFromApi() {
-                        let uri = `https://mainbro.ru/wp-json/wp/v2/media?page=${this.pageId}&per_page=9`
+                        let uri = `https://titstok.ru/wp-json/wp/v2/media?page=${this.pageId}&per_page=9`
           axios.get(uri)
           .then(response => {
               this.videos = response.data

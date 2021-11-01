@@ -34,7 +34,7 @@ export default {
   },
   methods: {
       getDataFromApi() {
-                        let uri = 'https://mainbro.ru/wp-json/wp/v2/media?per_page=' + this.pageId
+                        let uri = `https://titstok.ru/wp-json/wp/v2/media?page=${this.pageId}&per_page=9`
           axios.get(uri)
           .then(response => {
               

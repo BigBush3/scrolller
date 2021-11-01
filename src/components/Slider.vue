@@ -1,9 +1,9 @@
 <template>
                     <div class='back'>
-                    <img src='../../public/video/4115230_cancel_close_delete_icon.svg' class='close_tag' v-on:click='routeHome'/>
-                    <swiper :options="swiperOptions" class='swiper'> 
-                    <swiper-slide ref='mySwiper'  v-for='(video, index) in videos' :key='index'><video-player :options='video' class="video-player-box container" /></swiper-slide>
-                    </swiper>
+                      <img src='../../public/video/4115230_cancel_close_delete_icon.svg' class='close_tag' v-on:click='routeHome'/>
+                        <swiper :options="swiperOptions" class='swiper' ref='mySwiper' id='swiper'> 
+                          <swiper-slide  v-for='(video, index) in videos' :key='index'><video-player :options='video' class="video-player-box container" /></swiper-slide>
+                        </swiper>
                      
                     </div>
 </template>
@@ -40,19 +40,42 @@ export default {
         secondColumnIndex: null,
         thirdColumnIndex: null,
         pageId: 1,
-        videos: []
+        videos: [],
+        lastScrollPosition: 0,
+        scrollDown: false,
+        scrollUp: false
 
       }
   },
+  watch: {
+    scrollDown: (newScrollDown, oldScrollDown) => {
+      console.log(oldScrollDown, newScrollDown)
+    }
+  },
   created() {
       this.getDataFromApi()
+      window.addEventListener('scroll', this.handleScroll);
   },
+  beforeUnmount() {
+    window.removeEventListener('scroll', this.handleScroll);
+},
   methods: {
+    handleScroll(){
+      const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop
+    // Because of momentum scrolling on mobiles, we shouldn't continue if it is less than zero
+    if (currentScrollPosition < 0) {
+      return
+    }
+    // Here we determine whether we need to show or hide the navbar
+    this.scrollDown = currentScrollPosition < this.lastScrollPosition
+    // Set the current scroll position as the last scroll position
+    this.lastScrollPosition = currentScrollPosition
+    },
       routeHome(){
         this.$router.push('/')
       },
       getDataFromApi() {
-                        let uri = `https://mainbro.ru/wp-json/wp/v2/media?page=${this.pageId}&per_page=9`
+                        let uri = `https://titstok.ru/wp-json/wp/v2/media?page=${this.pageId}&per_page=100`
           axios.get(uri)
           .then(response => {
               const data = response.data.map((item) => {
@@ -94,7 +117,7 @@ export default {
         return chunks;
         },
         
-  /*     onScroll() {
+  onScroll() {
    var usersHeading = this.$refs["users"];
    if (usersHeading) {
       var marginTopUsers = usersHeading.getBoundingClientRect().bottom;
@@ -105,7 +128,7 @@ export default {
           this.getDataFromApi()
       }                               
    }  
-}  */ 
+}  
   },
 }
 
@@ -120,7 +143,7 @@ body{
   display: flex;
   justify-content: center;
   max-width: 800px !important;
-  height: 800px
+  max-height: 800px;
 }
 .back{
   overflow: hidden;
@@ -152,6 +175,12 @@ body{
   background: white;
   border-radius: 5px;
   cursor: pointer;
+}
+.swiper video{
+  min-height: 400px;
+  min-width: 400px;
+  max-width: 800px;
+  max-height: 800px;
 }
 
 </style>

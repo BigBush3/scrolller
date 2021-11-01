@@ -11,7 +11,7 @@
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
     "swiper": "^6.7.5",
-    "vue": "^2.6.11",
+    "vue": "^2.6.10",
     "vue-awesome-swiper": "^4.1.1",
     "vue-fullscreen": "^2.5.2",
     "vue-router": "^3.2.0",

@@ -1,7 +1,7 @@
 <template>
-                    <div class='back'>
+                    <div class='back' ref='smth'>
                       <img src='../../public/video/4115230_cancel_close_delete_icon.svg' class='close_tag' v-on:click='routeHome'/>
-                        <swiper :options="swiperOptions" class='swiper' ref='mySwiper' id='swiper'> 
+                        <swiper :options="swiperOptions" class='swiper' ref='singleSwiper' id='swiper'> 
                           <swiper-slide  v-for='(video, index) in videos' :key='index'><video-player :options='video' class="video-player-box container" /></swiper-slide>
                         </swiper>
                      
@@ -22,6 +22,7 @@ export default {
     Swiper,
     SwiperSlide
   },
+
   directives: {
     swiper: directive
   },
@@ -48,18 +49,23 @@ export default {
       }
   },
   watch: {
-    scrollDown: (newScrollDown, oldScrollDown) => {
-      console.log(oldScrollDown, newScrollDown)
-    }
+
   },
   created() {
       this.getDataFromApi()
-      window.addEventListener('scroll', this.handleScroll);
+      window.addEventListener("wheel", this.handleScroll);
   },
   beforeUnmount() {
-    window.removeEventListener('scroll', this.handleScroll);
+    window.removeEventListener('wheel', this.handleScroll);
 },
   methods: {
+    scrollDownSwiper(){
+      console.log(this.$refs)
+      this.$refs.singleSwiper.$swiper.slideTo(Number(this.$refs.singleSwiper.$swiper.activeIndex) + 1, 1000)
+    },
+    scrollUpSwiper(){
+      this.$refs.singleSwiper.$swiper.slideTo(Number(this.$refs.singleSwiper.$swiper.activeIndex) - 1, 1000)
+    },
     handleScroll(){
       const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop
     // Because of momentum scrolling on mobiles, we shouldn't continue if it is less than zero
@@ -68,6 +74,12 @@ export default {
     }
     // Here we determine whether we need to show or hide the navbar
     this.scrollDown = currentScrollPosition < this.lastScrollPosition
+    if (currentScrollPosition < this.lastScrollPosition){
+      this.scrollDownSwiper()
+    } else {
+      this.scrollUpSwiper
+    }
+    this.scrollUp = currentScrollPosition > this.lastScrollPosition
     // Set the current scroll position as the last scroll position
     this.lastScrollPosition = currentScrollPosition
     },
@@ -165,7 +177,6 @@ body{
     align-items: center;
     text-align: center;
     font-weight: bold;
-    background-color: $white;
   }
 .close_tag{
   height: 50px;
